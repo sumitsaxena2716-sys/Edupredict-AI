@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Student Data</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f5f7fb;
+    text-align:center;
+}
+
+.container{
+    margin-top:80px;
+}
+
+.box{
+    width:500px;
+    height:220px;
+    margin:auto;
+    border:3px dashed #ff7a00;
+    border-radius:20px;
+    background:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.box:hover{
+    background:#fff3e6;
+    transform:scale(1.02);
+}
+
+h1{
+    color:#222;
+}
+
+p{
+    color:gray;
+}
+
+.btn{
+    margin-top:20px;
+    background:#ff7a00;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Upload Student Excel / CSV</h1>
+
+    <form
+        id="uploadForm"
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+        <div class="box" id="dropArea">
+            <h2>📂 Drag & Drop File Here</h2>
+            <p>or click to browse</p>
+            <input
+                type="file"
+                name="file"
+                id="fileInput"
+                hidden
+            >
+        </div>
+
+        <button class="btn">
+            Upload
+        </button>
+    </form>
+</div>
+
+<script>
+const dropArea = document.getElementById("dropArea");
+const fileInput = document.getElementById("fileInput");
+
+dropArea.onclick = () => fileInput.click();
+
+dropArea.addEventListener("dragover",(e)=>{
+    e.preventDefault();
+    dropArea.style.background="#ffe0cc";
+});
+
+dropArea.addEventListener("dragleave",()=>{
+    dropArea.style.background="white";
+});
+
+dropArea.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    dropArea.style.background="white";
+    fileInput.files = e.dataTransfer.files;
+});
+</script>
+
+</body>
+</html>

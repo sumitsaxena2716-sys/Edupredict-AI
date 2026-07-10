@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Prediction</title>
+
+<style>
+body{
+    margin:0;
+    padding:30px;
+    font-family:Arial, sans-serif;
+    background:#f5f7fb;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:25px;
+    color:#222;
+}
+
+.filters{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:25px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+input, select, button{
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    font-size:14px;
+}
+
+button{
+    background:#ff7a00;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.clear{
+    background:#555;
+}
+
+.delete-btn{
+    background:#d10000;
+}
+
+.box{
+    background:white;
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#ff7a00;
+    color:white;
+    padding:16px;
+}
+
+td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.clickable{
+    cursor:pointer;
+    transition:.2s;
+}
+
+.clickable:hover{
+    background:#fff3e6;
+}
+
+.low{
+    color:red;
+    font-weight:bold;
+}
+
+.good{
+    color:green;
+    font-weight:bold;
+}
+
+.risk-high{
+    color:red;
+    font-weight:bold;
+}
+
+.risk-medium{
+    color:#d58b00;
+    font-weight:bold;
+}
+
+.risk-low{
+    color:green;
+    font-weight:bold;
+}
+
+.action-btn{
+    background:#d10000;
+    color:white;
+    padding:8px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    font-size:13px;
+}
+</style>
+</head>
+<body>
+
+<h1>Smart Prediction Analysis</h1>
+
+<!-- Filters -->
+<form class="filters" method="GET">
+    <input type="text" name="search" placeholder="Search student..."
+           value="{{ request.args.get('search','') }}">
+
+    <select name="risk">
+        <option value="">All Risk</option>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+    </select>
+
+    <select name="grade">
+        <option value="">All Grades</option>
+        <option>A+</option>
+        <option>A</option>
+        <option>B+</option>
+        <option>B</option>
+        <option>C</option>
+    </select>
+
+    <select name="sort">
+        <option value="desc">CGPA High → Low</option>
+        <option value="asc">CGPA Low → High</option>
+    </select>
+
+    <button type="submit">Apply</button>
+
+    <button type="button" class="clear"
+            onclick="window.location='/prediction'">
+        Clear
+    </button>
+</form>
+
+<!-- Delete Selected -->
+<form method="POST" action="/delete_selected">
+
+<div style="margin-bottom:15px;">
+    <button type="submit" class="delete-btn">
+        Delete Selected
+    </button>
+</div>
+
+<div class="box">
+<table>
+
+<tr>
+    <th>
+        <input type="checkbox" id="selectAll">
+    </th>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Predicted CGPA</th>
+    <th>Grade</th>
+    <th>Risk</th>
+    <th>Weak Subjects</th>
+    <th>Strong Subjects</th>
+    <th>Action</th>
+</tr>
+
+{% for row in data %}
+<tr class="clickable"
+    onclick="window.location='/student/{{ row[0] }}'">
+
+    <td onclick="event.stopPropagation()">
+        <input type="checkbox"
+               class="studentCheck"
+               name="student_ids"
+               value="{{ row[0] }}">
+    </td>
+
+    <td>{{ row[0] }}</td>
+    <td>{{ row[1] }}</td>
+    <td>{{ row[2] }}</td>
+    <td>{{ row[3] }}</td>
+
+    <td class="
+    {% if 'High' in row[4] %}
+        risk-high
+    {% elif 'Medium' in row[4] %}
+        risk-medium
+    {% else %}
+        risk-low
+    {% endif %}
+    ">
+        {{ row[4] }}
+    </td>
+
+    <td class="low">{{ row[5] }}</td>
+    <td class="good">{{ row[6] }}</td>
+
+    <td onclick="event.stopPropagation()">
+        <a href="/delete/{{ row[0] }}"
+           class="action-btn"
+           onclick="return confirm('Delete this student?')">
+            Delete
+        </a>
+    </td>
+
+</tr>
+{% endfor %}
+
+</table>
+</div>
+
+</form>
+
+<script>
+document.getElementById("selectAll").addEventListener("change", function(){
+    let checked = this.checked;
+    let boxes = document.querySelectorAll(".studentCheck");
+
+    boxes.forEach(box=>{
+        box.checked = checked;
+    });
+});
+</script>
+
+</body>
+</html>
