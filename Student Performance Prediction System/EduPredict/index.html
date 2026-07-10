@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPredict AI</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f5f7fb;
+}
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 40px;
+    background:white;
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    color:#ff7a00;
+}
+
+.nav-links a{
+    margin-left:20px;
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+}
+
+.hero{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:50px;
+}
+
+.hero-text{
+    max-width:50%;
+}
+
+.hero-text h1{
+    font-size:42px;
+    color:#222;
+    line-height:1.3;
+}
+
+.hero-text p{
+    color:gray;
+    font-size:18px;
+}
+
+.student-img{
+    width:220px;
+}
+
+.btn{
+    margin-top:15px;
+    background:#ff7a00;
+    color:white;
+    border:none;
+    padding:12px 24px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.live-section{
+    padding:0 50px 40px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.label{
+    color:gray;
+    margin-bottom:10px;
+}
+
+.big{
+    font-size:32px;
+    font-weight:bold;
+    color:#ff7a00;
+}
+
+.graph-box{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+    margin-bottom:40px;
+}
+
+canvas{
+    max-height:380px;
+}
+
+.section{
+    padding:0 50px 50px;
+}
+
+.cards2{
+    display:flex;
+    gap:20px;
+}
+
+.card2{
+    flex:1;
+    background:white;
+    padding:25px;
+    text-align:center;
+    border-radius:15px;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card2:hover{
+    transform:translateY(-5px);
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">EduPredict AI</div>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/dashboard">Performance</a>
+        <a href="/prediction">Smart Prediction</a>
+        <a href="/input">Upload</a>
+    </div>
+</div>
+
+<div class="hero">
+
+    <div class="hero-text">
+        <h1>
+            Academic Navigator:<br>
+            Unlock Potential,<br>
+            Predict Success
+        </h1>
+
+        <p>AI Powered Student Performance Analytics</p>
+
+        <button
+            class="btn"
+            onclick="location.href='/input'"
+        >
+            Get Started
+        </button>
+    </div>
+
+    <img
+        src="https://cdn-icons-png.flaticon.com/512/3135/3135755.png"
+        class="student-img"
+    >
+</div>
+
+<div class="live-section">
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="label">🏆 Topper</div>
+            <div class="big">{{ topper }}</div>
+        </div>
+
+        <div class="card">
+            <div class="label">📈 Average</div>
+            <div class="big">{{ avg_cgpa }}</div>
+        </div>
+
+        <div class="card">
+            <div class="label">🟢 Low Risk</div>
+            <div class="big">{{ low_risk }}</div>
+        </div>
+
+        <div class="card">
+            <div class="label">🔴 High Risk</div>
+            <div class="big">{{ high_risk }}</div>
+        </div>
+
+    </div>
+
+    <div class="graph-box">
+        <h2>Top 10 Student Performance Trend</h2>
+        <canvas id="lineChart"></canvas>
+    </div>
+
+</div>
+
+<div class="section">
+
+    <h2>How it Works</h2>
+
+    <div class="cards2">
+
+        <div class="card2" onclick="location.href='/input'">
+            <h3>📂 Upload Data</h3>
+            <p>Upload CSV / Excel student records</p>
+        </div>
+
+        <div class="card2" onclick="location.href='/dashboard'">
+            <h3>📊 Performance</h3>
+            <p>Analyze complete class performance</p>
+        </div>
+
+        <div class="card2" onclick="location.href='/prediction'">
+            <h3>🧠 Smart Prediction</h3>
+            <p>CGPA + Risk + Weak Subject Analysis</p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+new Chart(
+    document.getElementById("lineChart"),
+    {
+        type:"line",
+        data:{
+            labels: {{ top_names|tojson }},
+            datasets:[{
+                label:"CGPA",
+                data: {{ top_scores|tojson }},
+                fill:false,
+                tension:.35,
+                borderWidth:3,
+                pointRadius:5
+            }]
+        },
+        options:{
+            responsive:true,
+            scales:{
+                y:{
+                    beginAtZero:true,
+                    max:10
+                }
+            }
+        }
+    }
+);
+</script>
+
+</body>
+</html>
