@@ -1,4 +1,4 @@
-# 🎓 Edupredict-AI — Student Performance Prediction
+# 🎓 Edupredict-AI — Student Performance Prediction 
 
 An AI-powered system that predicts and flags at-risk students using supervised machine learning, helping identify who needs academic support before it's too late.
 
