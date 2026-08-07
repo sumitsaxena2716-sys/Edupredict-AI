@@ -4,8 +4,7 @@ import pandas as pd
 import pickle
 import statistics
 import json
-import os
-
+import os
 from utils import process_student
 
 app = Flask(__name__)
@@ -21,6 +20,7 @@ db = mysql.connector.connect(
     database="learnlytics"
 )
 cursor = db.cursor()
+
 
 
 # =========================
